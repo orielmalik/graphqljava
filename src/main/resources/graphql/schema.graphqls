@@ -1,0 +1,11 @@
+type Query {
+    getDummyById (id:ID):DummyGraphQlBoundary
+    getPageOfDummies (page:Int, size:Int):[DummyGraphQlBoundary]
+}
+
+type DummyGraphQlBoundary{
+    id:ID
+    name:String
+    createdTimestamp:String
+    related(page:Int, size:Int):[DummyGraphQlBoundary]
+}
