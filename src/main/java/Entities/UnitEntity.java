@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Document(collection = "UNITS")
 public class UnitEntity {
@@ -16,7 +17,7 @@ public class UnitEntity {
     private Date creationDate;
     private String type;
     private String  emailManager;
-    private List<UnitEntity> subUnits;
+    private Set<UnitEntity> subUnits;
     private UnitEntity[]units;
     public UnitEntity(){}
 
@@ -52,11 +53,11 @@ public class UnitEntity {
         this.emailManager = emailManager;
     }
 
-    public List<UnitEntity> getSubUnits() {
+    public Set<UnitEntity> getSubUnits() {
         return subUnits;
     }
 
-    public void setSubUnits(List<UnitEntity> subUnits) {
+    public void setSubUnits(Set<UnitEntity> subUnits) {
         this.subUnits = subUnits;
     }
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Date;
+import java.util.HashSet;
 
 @Service
 public class UnitServiceImp implements UnitService {
@@ -33,13 +34,14 @@ public class UnitServiceImp implements UnitService {
                             UnitEntity unitEntity=unitBoundary.toEntity();
                             unitEntity.setCreationDate(new Date());
                             unitEntity.setId(unitBoundary.getId());
+                            unitEntity.setSubUnits(new HashSet<>());
                             return Mono.just(unitEntity);
                         })).zipWith(this.unitCrud.findById(existingParentUnitId))
                         .flatMap(tuple->{
                             UnitEntity fromEntity = (UnitEntity) tuple.getT1();
                             UnitEntity toEntity = tuple.getT2();
-                          toEni
-
+                            toEntity.getSubUnits().add(fromEntity);
+//TODO
                               return  this.unitCrud.save(toEntity);
                         }).map(UnitBoundary::new).log();
 
@@ -55,7 +57,7 @@ public class UnitServiceImp implements UnitService {
 
 
 
-    public
+
 
 
 }

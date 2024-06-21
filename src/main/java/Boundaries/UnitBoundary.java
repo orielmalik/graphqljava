@@ -13,7 +13,7 @@ public class UnitBoundary {
     private EmployeeBoundary[]employees;
     private UnitBoundary[]subUnits;
     private Date creationDate;
-    private UnitBoundary parentUnit;
+    private ParentUnit parentUnit;
 
     public UnitBoundary(){}
 
@@ -79,11 +79,11 @@ public UnitBoundary(UnitEntity unitEntity)
         this.creationDate = creationDate;
     }
 
-    public UnitBoundary getParentUnit() {
+    public ParentUnit getParentUnit() {
         return parentUnit;
     }
 
-    public void setParentUnit(UnitBoundary parentUnit) {
+    public void setParentUnit(ParentUnit parentUnit) {
         this.parentUnit = parentUnit;
     }
 

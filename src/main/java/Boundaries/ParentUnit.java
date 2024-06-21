@@ -1,15 +1,9 @@
 package Boundaries;
 
-import java.util.List;
-import java.util.Map;
+public class ParentUnit {
+ private UnitBoundary unitBoundary;
 
-public class Org {
-
-
-  private UnitBoundary unitBoundary;
-    public Org(){}
-
-
+public ParentUnit(){}
     public UnitBoundary getUnitBoundary() {
         return unitBoundary;
     }
