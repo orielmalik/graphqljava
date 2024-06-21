@@ -55,9 +55,10 @@ public class UnitServiceImp implements UnitService {
 
     }
 
-
-
-
+    @Override
+    public Mono<Void> deleteAll() {
+        return this.unitCrud.deleteAll();
+    }
 
 
 }

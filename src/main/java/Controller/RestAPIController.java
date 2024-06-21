@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping(path = {"/org"})
+@RequestMapping("/org")
 public class RestAPIController {
 private UnitService unitService;
 
@@ -17,7 +17,7 @@ public RestAPIController(UnitService unitService)
     this.unitService=unitService;
 }
 @PostMapping
-        (path ="/{existingParentUnitId}")
+        ("/{existingParentUnitId}")
     public Mono<UnitBoundary>createUnit(@PathVariable(value ="existingParentUnitId")String existingParentUnitId,@RequestBody UnitBoundary unitBoundary)
 {
     return this.unitService.create(existingParentUnitId,unitBoundary);

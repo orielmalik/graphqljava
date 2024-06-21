@@ -3,6 +3,7 @@ package Boundaries;
 import Entities.UnitEntity;
 
 import java.util.Date;
+import java.util.HashSet;
 
 public class UnitBoundary {
 
@@ -17,15 +18,15 @@ public class UnitBoundary {
 
     public UnitBoundary(){}
 
-public UnitBoundary(UnitEntity unitEntity)
-{
-    setEmployees(getEmployees());
-    setId(getId());
-    Manager man=new Manager();man.setEmail(unitEntity.getEmailManager());
-    setManager(man);
-    setType(unitEntity.getType());
-    setCreationDate(unitEntity.getCreationDate());
-}
+    public UnitBoundary(UnitEntity unitEntity)
+    {
+        setEmployees(getEmployees());
+        setId(getId());
+        Manager man=new Manager();man.setEmail(unitEntity.getEmailManager());
+        setManager(man);
+        setType(unitEntity.getType());
+        setCreationDate(unitEntity.getCreationDate());
+    }
 
     public UnitEntity toEntity()
     {
@@ -34,8 +35,9 @@ public UnitBoundary(UnitEntity unitEntity)
         unitEntity.setEmailManager(getManager().getEmail());
         unitEntity.setId(getId());
         unitEntity.setType(getType());
-        unitEntity.setUnits(unitEntity.getUnits());
-        //the rest i will fill after call
+        unitEntity.setSubUnits(new HashSet<>());
+
+        //the rest i will fill after call with graphql
         return unitEntity;
     }
 
