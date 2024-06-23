@@ -1,7 +1,9 @@
-package Boundaries;
+package com.example.businessunitsmicroservice.Boundaries;
 
-import Entities.UnitEntity;
+import com.example.businessunitsmicroservice.Entities.UnitEntity;
+import com.example.businessunitsmicroservice.Tools.ValidationUtils;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -13,7 +15,7 @@ public class UnitBoundary {
     private Manager manager;
     private EmployeeBoundary[]employees;
     private UnitBoundary[]subUnits;
-    private Date creationDate;
+    private String creationDate;
     private ParentUnit parentUnit;
 
     public UnitBoundary(){}
@@ -21,22 +23,55 @@ public class UnitBoundary {
     public UnitBoundary(UnitEntity unitEntity)
     {
         setEmployees(getEmployees());
-        setId(getId());
+        setId(unitEntity.getId());
         Manager man=new Manager();man.setEmail(unitEntity.getEmailManager());
         setManager(man);
         setType(unitEntity.getType());
-        setCreationDate(unitEntity.getCreationDate());
+        setCreationDate(ValidationUtils.dateToString(unitEntity.getCreationDate()));
+       if(unitEntity.getSubUnits()!=null)
+       {
+           if(null!=ValidationUtils.convertHashSetToArray(unitEntity.getSubUnits()))
+           {
+               setSubUnits(ValidationUtils.convertHashSetToArray(unitEntity.getSubUnits()));
+
+           }
+
+       }
+    }
+
+    public UnitBoundary(String id) {
+        this.id=id;
     }
 
     public UnitEntity toEntity()
     {
+        Date date;
         UnitEntity unitEntity=new UnitEntity();
-        unitEntity.setCreationDate(getCreationDate());
+        if(ValidationUtils.isValidDateFormat(getCreationDate()))//exactly will happen if fixed
+        {
+            try {
+                date=ValidationUtils.stringToDate(getCreationDate())  ;
+                unitEntity.setCreationDate(date);
+            }catch (ParseException p)
+            {
+
+            }
+
+        }
         unitEntity.setEmailManager(getManager().getEmail());
         unitEntity.setId(getId());
         unitEntity.setType(getType());
         unitEntity.setSubUnits(new HashSet<>());
+        if(getSubUnits()!=null) {
+            for (int i = 0; i < getSubUnits().length; i++) {
+                if (getSubUnits()[i] != null)
+                {
+                   UnitEntity unitEntity1= getSubUnits()[i].toEntity();
+                    unitEntity.getSubUnits().add(unitEntity1);//recursian for tree
 
+                }
+            }
+        }
         //the rest i will fill after call with graphql
         return unitEntity;
     }
@@ -73,11 +108,11 @@ public class UnitBoundary {
         this.employees = employees;
     }
 
-    public Date getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 

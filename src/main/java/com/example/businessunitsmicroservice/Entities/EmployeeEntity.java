@@ -1,4 +1,4 @@
-package Entities;
+package com.example.businessunitsmicroservice.Entities;
 
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
