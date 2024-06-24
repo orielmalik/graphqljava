@@ -1,5 +1,6 @@
 package com.example.businessunitsmicroservice.Tools;
 
+import com.example.businessunitsmicroservice.Boundaries.EmployeeBoundary;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
 
@@ -7,7 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class ValidationUtils {
@@ -81,7 +81,7 @@ public class ValidationUtils {
     }
 
 
-    public static UnitBoundary[] convertHashSetToArray(Set<UnitEntity> set) {
+    public static UnitBoundary[] convertHashSetToArray(Set<UnitEntity> set, UnitEntity unitEntity) {
         if (set == null || set.isEmpty()) {
             return null;
         }
@@ -96,7 +96,7 @@ public class ValidationUtils {
             UnitBoundary item = new UnitBoundary(iterator.next());
             if (item != null) {
                 if (emails.contains(item.getId())) {
-                    convertHashSetToArray(iterator.next().getSubUnits());
+                    convertHashSetToArray(iterator.next().getSubUnits(), unitEntity);
                 } else {
                     emails.add(item.getId());
 
@@ -109,4 +109,23 @@ public class ValidationUtils {
 
 
     }
+
+    // הפונקציה הראשונה: קבלת מערך של EmployeeBoundary והחזרת Set של כתובות ה-Email
+    public static Set<String> extractEmails(EmployeeBoundary[] employees) {
+        Set<String> emailSet = new HashSet<>();
+        for (EmployeeBoundary employee : employees) {
+            if (employee.getEmail() != null) {
+                emailSet.add(employee.getEmail());
+            }
+        }
+        return emailSet;
+    }
+
+    // הפונקציה השנייה: קבלת Set של כתובות ה-Email והחזרת מערך של EmployeeBoundary
+    public static EmployeeBoundary[] createEmployeesFromEmails(Set<String> emails) {
+        return emails.stream()
+                .map(EmployeeBoundary::new)
+                .toArray(EmployeeBoundary[]::new);
+    }
+
 }

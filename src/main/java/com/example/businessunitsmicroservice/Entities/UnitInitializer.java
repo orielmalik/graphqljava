@@ -60,9 +60,10 @@ public class UnitInitializer implements CommandLineRunner {
                         .flatMap(d->{
                             d.setManager(createManagerForUnit(d.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
-                            d.setParentUnit(new ParentUnit(unitBoundary));
+                           // d.setParentUnit(new ParentUnit(unitBoundary));
 
                             return this.UnitService.create(unitBoundary.getId(),d)
+                                    .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),root.getId());})
                                     .then(Mono.just(d));
                         })
                         .log()
@@ -77,9 +78,9 @@ public class UnitInitializer implements CommandLineRunner {
                         .flatMap(d->{
                             d.setManager(createManagerForUnit(rd.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
-                            d.setParentUnit(new ParentUnit(rd));
-
+                            //d.setParentUnit(new ParentUnit(rd));
                             return this.UnitService.create(rd.getId(),d)
+                                    .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),rd.getId());})
                                     .then(Mono.just(d));
                         })
                         .log()
@@ -92,10 +93,11 @@ public class UnitInitializer implements CommandLineRunner {
                 Flux.just("Third_Level_Support ", "Post_Sale")
                         .map(UnitBoundary::new)
                         .flatMap(d->{
-                            d.setParentUnit(new ParentUnit(support));
+                          //  d.setParentUnit(new ParentUnit(support));
                             d.setManager(createManagerForUnit(support.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                             return this.UnitService.create(support.getId(),d)
+                                    .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),support.getId());})
                                     .then(Mono.just(d));
                         })
                         .log()

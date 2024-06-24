@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.*;
 
 @Service
 public class UnitServiceImp implements UnitService {
@@ -22,50 +22,46 @@ public class UnitServiceImp implements UnitService {
     {
         this.unitCrud=peopleCrud;
     }
-
+//date of json requestbody to fail Hackers if the date is not at format
     @Override
     public Mono<UnitBoundary> create(String existingParentUnitId, UnitBoundary unitBoundary) {
 
-         if((existingParentUnitId == null || existingParentUnitId.isEmpty())&&
-        unitBoundary.getId().equals("org")&&ValidationUtils.isValidDateFormat(unitBoundary.getCreationDate()))
+        if((existingParentUnitId == null || existingParentUnitId.isEmpty())&&
+                unitBoundary.getId().equals("org")&&ValidationUtils.isValidDateFormat(unitBoundary.getCreationDate()))
         {
             return this.unitCrud.findById(unitBoundary.getId())
                     .flatMap(unitEntity -> Mono.error(new NotFound404("Unit already exists")))
                     .switchIfEmpty(Mono.defer(() -> {
+                        unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
                         return this.unitCrud.save(unitBoundary.toEntity());
                     }))
-            .map(o -> {return  new UnitBoundary((UnitEntity) o);}).log();
+                    .map(o -> {return  new UnitBoundary((UnitEntity) o);}).log();
         }
- else if ((existingParentUnitId == null || existingParentUnitId.isEmpty() )&&
-                 (unitBoundary.getId() == null || unitBoundary.getId().isEmpty())) {
+        else if ((existingParentUnitId == null || existingParentUnitId.isEmpty() )&&
+                (unitBoundary.getId() == null || unitBoundary.getId().isEmpty())) {
             return Mono.error(new NotFound404("not found existing"));
         }
         else if (!ValidationUtils.isValidDateFormat(unitBoundary.getCreationDate())) {
             return Mono.error(new NotFound404("not found existing"));//same to fail  hackers
         }
-else {//case all nodes without org
-             return this.unitCrud.findById(unitBoundary.getId())
-                     .flatMap(unitEntity -> Mono.error(new NotFound404("Unit already exists")))
-                     .switchIfEmpty(Mono.defer(() -> {
+        else {//case all nodes without org
+            return this.unitCrud.findById(unitBoundary.getId())
+                    .flatMap(unitEntity -> Mono.error(new NotFound404("Unit already exists")))
+                    .switchIfEmpty(Mono.defer(() -> {
+                        unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
+                        return this.unitCrud.save(unitBoundary.toEntity());
+                    }))
+                    .zipWith(this.unitCrud.findById(existingParentUnitId))
+                    .switchIfEmpty(Mono.error(new NotFound404("not found existing")))
+                    .flatMap(tuple -> {
 
-                         return this.unitCrud.save(unitBoundary.toEntity());
-                     }))
-                     .zipWith(this.unitCrud.findById(existingParentUnitId))
-                     .switchIfEmpty(Mono.error(new NotFound404("not found existing")))
-                     .flatMap(tuple -> {
-                         UnitEntity child = (UnitEntity) tuple.getT1();
-                         UnitEntity parent = tuple.getT2();
-
-                         if(parent.getSubUnits()==null)
-                         {
-                             parent.setSubUnits(new HashSet<>());
-                         }
-                         parent.getSubUnits().add(child);
-                         return this.unitCrud.save(parent);
-                     })
-                     .map(UnitBoundary::new)
-                     .log();
-         }
+                        UnitEntity child = (UnitEntity) tuple.getT1();
+                        UnitEntity parent = tuple.getT2();
+                        child.setParent(parent);
+                        return this.unitCrud.save(child);
+                    })
+                    .map(UnitBoundary::new)
+                    .log();}
     }
 
     @Override
@@ -77,7 +73,7 @@ else {//case all nodes without org
                         return  this.unitCrud.deleteById(unitEntity.getId());
                     }else {
                         unitEntity.setSubUnits(null);
-                        return Flux.empty();
+                        return this.unitCrud.save(unitEntity);
                     }
                 }).then().log();
     }
@@ -88,8 +84,15 @@ else {//case all nodes without org
     }
 
     @Override
-    public Mono<Void> bindUnits() {
-        return null;
+    public Mono<Void> bindUnits(UnitEntity units,String id) {
+        return this.unitCrud.findById(id).
+                flatMap(unitEntity -> {
+                    if(unitEntity.getSubUnits()==null)
+                    {
+                        unitEntity.setSubUnits(new HashSet<>());
+                    }
+                    unitEntity.getSubUnits().add(units);
+                    ;return  this.unitCrud.save(unitEntity);}).then();
     }
 
     @Override
