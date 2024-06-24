@@ -1,7 +1,7 @@
 package com.example.businessunitsmicroservice.Controller;
 
 
-import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
+import com.example.businessunitsmicroservice.Boundaries.*;
 import com.example.businessunitsmicroservice.Interfaces.UnitService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.Arguments;
@@ -23,9 +23,10 @@ public class UnitGraphQlController {
     public Mono<UnitBoundary> getSpecificUnit(@Argument String id) {
         return this.unitService
                 .getSpecificUnitById(id)
-                .map(this::toGraphQLBoundary)
                 .log();
     }
+
+
 
     @QueryMapping
     public Flux<UnitBoundary> allUnits(
@@ -33,6 +34,13 @@ public class UnitGraphQlController {
             @Argument int size
     ) {
         return this.unitService.getAllUnits(page, size)
+                .log();
+    }
+ @QueryMapping
+    public Mono<UnitBoundary> unit(
+            @Argument String id
+    ) {
+        return this.unitService.getSpecificUnitById(id)
                 .log();
     }
 

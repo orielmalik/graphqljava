@@ -62,7 +62,7 @@ public class UnitInitializer implements CommandLineRunner {
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                            // d.setParentUnit(new ParentUnit(unitBoundary));
 
-                            return this.UnitService.create(unitBoundary.getId(),d)
+                            return this.UnitService.create(root.getId(),d)
                                     .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),root.getId());})
                                     .then(Mono.just(d));
                         })
@@ -76,7 +76,7 @@ public class UnitInitializer implements CommandLineRunner {
                 Flux.just("Core_Division", "Cloud_Team","DevOps_Team")
                         .map(UnitBoundary::new)
                         .flatMap(d->{
-                            d.setManager(createManagerForUnit(rd.getId()));
+                            d.setManager(createManagerForUnit(d.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                             //d.setParentUnit(new ParentUnit(rd));
                             return this.UnitService.create(rd.getId(),d)
@@ -90,11 +90,11 @@ public class UnitInitializer implements CommandLineRunner {
  UnitBoundary  support=this.UnitService.getById("Support").block();
 
           List<UnitBoundary> su_children =
-                Flux.just("Third_Level_Support ", "Post_Sale")
+                Flux.just("Third_Level_Support", "Post_Sale")
                         .map(UnitBoundary::new)
                         .flatMap(d->{
                           //  d.setParentUnit(new ParentUnit(support));
-                            d.setManager(createManagerForUnit(support.getId()));
+                            d.setManager(createManagerForUnit(d.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                             return this.UnitService.create(support.getId(),d)
                                     .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),support.getId());})
@@ -103,7 +103,8 @@ public class UnitInitializer implements CommandLineRunner {
                         .log()
                         .collectList()
                         .block();
-
+//my check function
+        this.UnitService.connectToParent().block();
 
     }
 

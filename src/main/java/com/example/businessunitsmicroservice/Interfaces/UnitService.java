@@ -24,4 +24,6 @@ public interface UnitService {
     Mono<UnitBoundary> getSpecificUnitById(String id);
 
     Flux<UnitBoundary> getAllUnits(int page, int size);
+
+    Mono<Void>connectToParent();
 }

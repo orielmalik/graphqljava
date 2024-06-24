@@ -1,7 +1,29 @@
 
-
-package com.example.businessunitsmicroservice.graphql;
+package com.example.businessunitsmicroservice.Boundaries;
 public class UnitGraphQLBoundary {
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private String id;
     private String type;
     private String managerEmail;
@@ -31,6 +53,12 @@ public class UnitGraphQLBoundary {
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
+
+
+    public UnitGraphQLBoundary(){
+
+    }
+
     @Override
     public String toString() {
         return "UnitGraphQLBoundary{" +
@@ -40,4 +68,6 @@ public class UnitGraphQLBoundary {
                 ", creationDate='" + creationDate + '\'' +
                 '}';
     }
+    */
+
 }

@@ -130,5 +130,27 @@ public class UnitServiceImp implements UnitService {
                 .log();
     }
 
+    @Override
+    public Mono<Void> connectToParent() {
+        return this.unitCrud.findAll()
+                .flatMap(unitEntity -> {
+                    if (unitEntity.getParent() == null || unitEntity.getParent().getId().isEmpty()) {
+                        return Mono.empty();
+                    }
+                    return this.unitCrud.findById(unitEntity.getParent().getId())
+                            .flatMap(parentEntity -> {
+                                if (parentEntity.getSubUnits() == null) {
+                                    parentEntity.setSubUnits(new HashSet<>());
+                                }
+                                if (!parentEntity.getSubUnits().contains(unitEntity)) {
+                                    parentEntity.getSubUnits().add(unitEntity);
+                                    return this.unitCrud.save(parentEntity);
+                                }
+                                return Mono.just(parentEntity);
+                            });
+                })
+                .then();
+    }
+
 
 }
