@@ -11,5 +11,5 @@ import reactor.core.publisher.Mono;
 public interface UnitCrud extends ReactiveMongoRepository<UnitEntity,String> {
 
 
-    Flux<UnitEntity> findAll(Pageable pageable);
+    public Flux<UnitEntity> findAllByIdNotNull (Pageable pageable);
 }

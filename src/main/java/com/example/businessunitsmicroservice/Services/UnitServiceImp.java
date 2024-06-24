@@ -114,7 +114,7 @@ public class UnitServiceImp implements UnitService {
 
     @Override
     public Flux<UnitBoundary> getAllUnits(int page, int size) {
-        return this.unitCrud.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "createdTimestamp", "name", "id"))
+        return this.unitCrud.findAllByIdNotNull(PageRequest.of(page, size, Sort.Direction.ASC, "createdTimestamp", "name", "id"))
                 .map(UnitBoundary::new)
                 .log();
     }
