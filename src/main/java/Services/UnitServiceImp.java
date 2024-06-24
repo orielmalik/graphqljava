@@ -47,9 +47,20 @@ public class UnitServiceImp implements UnitService {
 
     }
 
+
+    @Override
+    public Mono<UnitBoundary> getSpecificUnitById(String id) {
+        return this.unitCrud
+                .findById(id)
+                .switchIfEmpty(Mono.error(new NotFound404("Unit not found with id: " + id)))
+                .map(UnitBoundary::new)
+                .log();
+    }
+
     @Override
     public Mono<Void> deleteAllNotOrg() {
-        return this.unitCrud.findById("ceo@demo.org")//we know the org -it is not null
+        return this.unitCrud
+                .findById("ceo@demo.org")//we know the org -it is not null
                 .flatMap(unitEntity -> { return this.unitCrud.deleteAllExcept(unitEntity.getId());})
                 .then().log();
 
