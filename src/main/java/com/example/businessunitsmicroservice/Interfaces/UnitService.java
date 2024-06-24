@@ -17,4 +17,6 @@ public Mono<UnitBoundary>create(String existingParentUnitId,UnitBoundary unitBou
     Mono<UnitBoundary> getById(String id);
 
     Mono<UnitBoundary> getAllbyId();
+
+    Flux<UnitBoundary> getAllUnits(int page, int size);
 }

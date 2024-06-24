@@ -6,6 +6,8 @@ import com.example.businessunitsmicroservice.Exceptions.NotFound404;
 import com.example.businessunitsmicroservice.Interfaces.UnitService;
 import com.example.businessunitsmicroservice.Interfaces.UnitCrud;
 import com.example.businessunitsmicroservice.Tools.ValidationUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.springframework.stereotype.Service;
@@ -105,6 +107,13 @@ else {//case all nodes without org
     @Override
     public Mono<UnitBoundary> getAllbyId() {
         return this.unitCrud.findById("org").map(UnitBoundary::new);
+    }
+
+    @Override
+    public Flux<UnitBoundary> getAllUnits(int page, int size) {
+        return this.unitCrud.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "createdTimestamp", "name", "id"))
+                .map(UnitBoundary::new)
+                .log();
     }
 
 

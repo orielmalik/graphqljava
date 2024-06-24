@@ -1,11 +1,33 @@
 type Query {
-    getDummyById (id:ID):DummyGraphQlBoundary
-    getPageOfDummies (page:Int, size:Int):[DummyGraphQlBoundary]
+    unit(id: ID): UnitBoundary
+    employee(email: String): EmployeeBoundary
+    allUnits(size: Int, page: Int): [UnitBoundary]
 }
 
-type DummyGraphQlBoundary{
-    id:ID
-    name:String
-    createdTimestamp:String
-    related(page:Int, size:Int):[DummyGraphQlBoundary]
+type UnitBoundary {
+    id: ID
+    type: String
+    manager: Manager
+    employees: [EmployeeBoundary]
+    subUnits: [UnitBoundary]
+    creationDate: String
+    parentUnit: ParentUnit
 }
+
+type EmployeeBoundary {
+    email: String
+    subUnits: [UnitBoundary]
+    manager: UnitBoundary
+
+}
+
+type Manager {
+    email: String
+}
+
+
+type ParentUnit {
+    unitBoundary: UnitBoundary
+}
+
+
