@@ -10,6 +10,6 @@ import reactor.core.publisher.Mono;
 
 public interface UnitCrud extends ReactiveMongoRepository<UnitEntity,String> {
 
-
+    public Mono<UnitEntity> findById(String id);
     public Flux<UnitEntity> findAllByIdNotNull (Pageable pageable);
 }

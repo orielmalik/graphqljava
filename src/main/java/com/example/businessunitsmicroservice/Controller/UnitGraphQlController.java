@@ -19,6 +19,13 @@ public class UnitGraphQlController {
     }
 
 
+    @QueryMapping
+    public Mono<UnitBoundary> getSpecificUnit(@Argument String id) {
+        return this.unitService
+                .getSpecificUnitById(id)
+                .map(this::toGraphQLBoundary)
+                .log();
+    }
 
     @QueryMapping
     public Flux<UnitBoundary> allUnits(

@@ -24,7 +24,7 @@ public class UnitServiceImp implements UnitService {
     {
         this.unitCrud=peopleCrud;
     }
-//date of json requestbody to fail Hackers if the date is not at format
+    //date of json requestbody to fail Hackers if the date is not at format
     @Override
     public Mono<UnitBoundary> create(String existingParentUnitId, UnitBoundary unitBoundary) {
 
@@ -111,6 +111,17 @@ public class UnitServiceImp implements UnitService {
     public Mono<UnitBoundary> getAllbyId() {
         return this.unitCrud.findById("org").map(UnitBoundary::new);
     }
+
+
+    @Override
+    public Mono<UnitBoundary> getSpecificUnitById(String id) {
+        return this.unitCrud.findById(id)
+                .switchIfEmpty(Mono.error(new NotFound404("Unit not found with id: " + id)))
+                .map(UnitBoundary::new)
+                .log();
+    }
+
+
 
     @Override
     public Flux<UnitBoundary> getAllUnits(int page, int size) {

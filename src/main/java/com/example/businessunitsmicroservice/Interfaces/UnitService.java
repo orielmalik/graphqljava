@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface UnitService {
 
-public Mono<UnitBoundary>create(String existingParentUnitId,UnitBoundary unitBoundary);
+    public Mono<UnitBoundary>create(String existingParentUnitId,UnitBoundary unitBoundary);
     public Mono<Void> deleteAllNotOrg();
     public Mono<Void> deleteAll();
     public Mono<Void> bindUnits(UnitEntity units,String id);
@@ -20,6 +20,8 @@ public Mono<UnitBoundary>create(String existingParentUnitId,UnitBoundary unitBou
     Mono<UnitBoundary> getById(String id);
 
     Mono<UnitBoundary> getAllbyId();
+
+    Mono<UnitBoundary> getSpecificUnitById(String id);
 
     Flux<UnitBoundary> getAllUnits(int page, int size);
 }

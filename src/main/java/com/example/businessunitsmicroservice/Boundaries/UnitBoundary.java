@@ -30,12 +30,12 @@ public class UnitBoundary {
         setType(unitEntity.getType());
         setCreationDate(ValidationUtils.dateToString(unitEntity.getCreationDate()));
         if(unitEntity.getParent()!=null){
-        setParentUnit(new ParentUnit(new UnitBoundary(unitEntity.getParent())));}
+            setParentUnit(new ParentUnit(new UnitBoundary(unitEntity.getParent())));}
         if(unitEntity.getSubUnits()!=null)
-       {
-               setSubUnits(ValidationUtils.convertHashSetToArray(unitEntity.getSubUnits(), unitEntity));
+        {
+            setSubUnits(ValidationUtils.convertHashSetToArray(unitEntity.getSubUnits(), unitEntity));
 
-       }
+        }
         if(unitEntity.getEmailsEmpolyee()!=null) {
             setEmployees(ValidationUtils.createEmployeesFromEmails(unitEntity.getEmailsEmpolyee()));
         }
@@ -71,7 +71,7 @@ public class UnitBoundary {
             for (int i = 0; i < getSubUnits().length; i++) {
                 if (getSubUnits()[i] != null)
                 {
-                   UnitEntity unitEntity1= getSubUnits()[i].toEntity();
+                    UnitEntity unitEntity1= getSubUnits()[i].toEntity();
                     unitEntity.getSubUnits().add(unitEntity1);//recursian for tree
 
                 }
