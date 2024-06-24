@@ -16,7 +16,10 @@ public class UnitEntity {
     private String type;
     private String  emailManager;
     private Set<UnitEntity> subUnits;
-    private UnitEntity[]units;
+    private Set<String> emailsEmpolyee;
+    private UnitEntity parent;
+
+
     public UnitEntity(){}
 
     public String getId() {
@@ -59,13 +62,20 @@ public class UnitEntity {
         this.subUnits = subUnits;
     }
 
-    public UnitEntity[] getUnits() {
-        return units;
+    public UnitEntity getParent() {
+        return parent;
     }
 
-    public void setUnits(UnitEntity[] units) {
-        this.units = units;
+    public void setParent(UnitEntity parent) {
+        this.parent = parent;
     }
 
 
+    public Set<String> getEmailsEmpolyee() {
+        return emailsEmpolyee;
+    }
+
+    public void setEmailsEmpolyee(Set<String> emailsEmpolyee) {
+        this.emailsEmpolyee = emailsEmpolyee;
+    }
 }

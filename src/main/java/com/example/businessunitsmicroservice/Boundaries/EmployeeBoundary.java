@@ -17,6 +17,10 @@ public EmployeeBoundary(EmployeeEntity employeeEntity)
 
 }
 
+    public EmployeeBoundary(String s) {
+    this.email=s;
+    }
+
     public String getEmail() {
         return email;
     }
