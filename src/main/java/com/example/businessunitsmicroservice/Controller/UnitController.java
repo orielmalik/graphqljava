@@ -24,10 +24,8 @@ public class UnitController {
     @DeleteMapping
     public Mono<Void> deleteAllExceptOrg() {
         return this.unitService.deleteAllNotOrg();
-    } @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<UnitBoundary> get() {
-        return this.unitService.getAll();
     }
+
 
 
 

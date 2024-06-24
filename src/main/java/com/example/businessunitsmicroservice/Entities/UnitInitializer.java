@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -35,6 +37,7 @@ public class UnitInitializer implements CommandLineRunner {
         unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
         UnitBoundary root = this.UnitService.create("",unitBoundary)
                 .block();
+
         //נתונים שעל השירות שלכם לאתחל בבסיס הנתונים
         //היררכיה של יחידות ארגוניות שעליכם להקים עם אתחול השירות, או לוודא שהיא כבר קיימת בבסיס הנתונים שלכם. ליד כל מזהה של יחידה ארגונית, מצוינת כתובת הדואל של המנהלת של אותה יחידה:
         //org (מנהלת: ceo@demo.org) - יחידה זו תמיד קיימת בשירות שלכם, גם אם מפעילים את פעולת DELETE ב-REST API
@@ -55,10 +58,10 @@ public class UnitInitializer implements CommandLineRunner {
                 Flux.just("R&D", "Logistics", "Marketing","Sales","Support","Finance","HR")
                         .map(UnitBoundary::new)
                         .flatMap(d->{
-                            d.setParentUnit(new ParentUnit(unitBoundary));
                             d.setManager(createManagerForUnit(d.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                             d.setParentUnit(new ParentUnit(unitBoundary));
+
                             return this.UnitService.create(unitBoundary.getId(),d)
                                     .then(Mono.just(d));
                         })
@@ -75,6 +78,7 @@ public class UnitInitializer implements CommandLineRunner {
                             d.setManager(createManagerForUnit(rd.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                             d.setParentUnit(new ParentUnit(rd));
+
                             return this.UnitService.create(rd.getId(),d)
                                     .then(Mono.just(d));
                         })
@@ -99,9 +103,24 @@ public class UnitInitializer implements CommandLineRunner {
                         .block();
 
 
-
     }
 
+private void  pl(UnitBoundary unitBoundary)
+{
+
+
+        if (unitBoundary.getSubUnits() != null) {
+            for (int i = 0; i < unitBoundary.getSubUnits().length; i++) {
+                if (unitBoundary.getSubUnits()[i].getSubUnits() != null) {
+                    System.out.println(unitBoundary.getSubUnits()[i].toString());
+                    for (int j = 0; j < unitBoundary.getSubUnits()[i].getSubUnits().length; j++) {
+                        pl(unitBoundary.getSubUnits()[i].getSubUnits()[j]);
+                    }
+                }
+
+        }
+    }
+    }
 
 
     private Manager createManagerForUnit(String unitName) {

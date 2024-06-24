@@ -15,4 +15,6 @@ public Mono<UnitBoundary>create(String existingParentUnitId,UnitBoundary unitBou
     Flux<UnitBoundary> getAll();
 
     Mono<UnitBoundary> getById(String id);
+
+    Mono<UnitBoundary> getAllbyId();
 }

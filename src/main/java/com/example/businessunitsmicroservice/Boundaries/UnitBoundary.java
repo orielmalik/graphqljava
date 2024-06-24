@@ -131,4 +131,31 @@ public class UnitBoundary {
     public void setSubUnits(UnitBoundary[] subUnits) {
         this.subUnits = subUnits;
     }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("UnitBoundary {")
+                .append("id='").append(id).append("', ")
+                .append("type='").append(type).append("', ")
+                .append("manager=").append(manager == null ? "null" : manager.getEmail().toString())
+                .append(", ")
+                .append("creationDate='").append(creationDate).append("'");
+
+        if (subUnits != null && subUnits.length > 0) {
+            sb.append(", subUnits=[");
+            for (int i = 0; i < subUnits.length; i++) {
+                if (subUnits[i] != null) {
+                    sb.append(subUnits[i].toString()).append(", ");
+                } else {
+                    sb.append("null, ");
+                }
+            }
+            sb.setLength(sb.length() - 2); // Remove trailing comma and space
+            sb.append("]");
+        }
+
+        sb.append(", parentUnit=").append(parentUnit == null ? "null" : parentUnit.toString())
+                .append("}");
+        return sb.toString();
+    }
 }

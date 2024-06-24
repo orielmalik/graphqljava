@@ -89,18 +89,24 @@ public class ValidationUtils {
 
         // Create a new set to hold non-null values
         Set<UnitBoundary> nonNullSet = new HashSet<>();
-
+        Set<String> emails = new HashSet<>();
         // Iterate over the set and add only non-null values to the new set
         Iterator<UnitEntity> iterator = set.iterator();
         while (iterator.hasNext()) {
-            UnitBoundary item = new UnitBoundary( iterator.next());
+            UnitBoundary item = new UnitBoundary(iterator.next());
             if (item != null) {
-                nonNullSet.add(item);
+                if (emails.contains(item.getId())) {
+                    convertHashSetToArray(iterator.next().getSubUnits());
+                } else {
+                    emails.add(item.getId());
+
+                    nonNullSet.add(item);
+                }
             }
         }
         UnitBoundary[] arrayType = new UnitBoundary[nonNullSet.size()];
         return nonNullSet.toArray(arrayType);
+
+
     }
-
-
 }
