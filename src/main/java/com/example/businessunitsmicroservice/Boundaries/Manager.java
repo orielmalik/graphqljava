@@ -1,4 +1,4 @@
-package Boundaries;
+package com.example.businessunitsmicroservice.Boundaries;
 
 public class Manager {
 

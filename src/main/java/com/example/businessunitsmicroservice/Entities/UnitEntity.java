@@ -1,12 +1,10 @@
-package Entities;
+package com.example.businessunitsmicroservice.Entities;
 
 
-import Boundaries.UnitBoundary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Document(collection = "UNITS")

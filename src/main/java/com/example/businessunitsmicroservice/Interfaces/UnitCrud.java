@@ -1,11 +1,10 @@
-package Interfaces;
+package com.example.businessunitsmicroservice.Interfaces;
 
-import Entities.UnitEntity;
+import com.example.businessunitsmicroservice.Entities.UnitEntity;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 
 public interface UnitCrud extends ReactiveMongoRepository<UnitEntity,String> {
 
 
-    public Mono<Void>deleteAllExcept(String email);
 }

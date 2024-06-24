@@ -1,6 +1,6 @@
-package Boundaries;
+package com.example.businessunitsmicroservice.Boundaries;
 
-import Entities.EmployeeEntity;
+import com.example.businessunitsmicroservice.Entities.EmployeeEntity;
 
 public class EmployeeBoundary {
 
