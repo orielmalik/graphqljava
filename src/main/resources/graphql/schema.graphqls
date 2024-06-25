@@ -9,14 +9,15 @@ type UnitBoundary {
     type: String
     manager: Manager
     employees: [EmployeeBoundary]
-    subUnits: [UnitBoundary]
     creationDate: String
     parentUnit: UnitBoundary
+    subUnits(size: Int, page: Int): [UnitBoundary]
+
 }
 
 type EmployeeBoundary {
     email: String
-    subUnits: [UnitBoundary]
+    Units: [UnitBoundary]
     manager: UnitBoundary
 
 }

@@ -6,7 +6,6 @@ import com.example.businessunitsmicroservice.Tools.ValidationUtils;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class UnitBoundary {
 
@@ -70,15 +69,21 @@ public class UnitBoundary {
         }
         if(getParentUnit()!=null) {
             unitEntity.setParent(getParentUnit().toEntity());
+            if(unitEntity.getParentIds()==null)
+            {
+                unitEntity.setParentIds(new HashSet<>());
+            }
+            unitEntity.getParentIds().add(getParentUnit().getId());
+
         }
-        unitEntity.setSubUnits(new HashSet<>());
+            unitEntity.setSubUnits(new HashSet<>());
+
         if(getSubUnits()!=null) {
             for (int i = 0; i < getSubUnits().length; i++) {
                 if (getSubUnits()[i] != null)
                 {
                     UnitEntity unitEntity1= getSubUnits()[i].toEntity();
                     unitEntity.getSubUnits().add(unitEntity1);//recursian for tree
-
                 }
             }
         }

@@ -1,12 +1,15 @@
 package com.example.businessunitsmicroservice.Services;
 
+import com.example.businessunitsmicroservice.Boundaries.Manager;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
+import com.example.businessunitsmicroservice.Exceptions.BadRequest400;
 import com.example.businessunitsmicroservice.Exceptions.NotFound404;
 import com.example.businessunitsmicroservice.Interfaces.UnitService;
 import com.example.businessunitsmicroservice.Interfaces.UnitCrud;
 import com.example.businessunitsmicroservice.Tools.ValidationUtils;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,13 +31,15 @@ public class UnitServiceImp implements UnitService {
     //i return the same exception to fail hackers
     @Override
     public Mono<UnitBoundary> create(String existingParentUnitId, UnitBoundary unitBoundary) {
-
+//way to create org
         if((existingParentUnitId == null || existingParentUnitId.isEmpty())&&
                 unitBoundary.getId().equals("org"))
         {
             return this.unitCrud.findById(unitBoundary.getId())
                     .flatMap(unitEntity -> Mono.error(new NotFound404("Unit already exists")))
                     .switchIfEmpty(Mono.defer(() -> {
+                        unitBoundary.setParentUnit(null);
+                        unitBoundary.setType("managment");
                         unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
                         return this.unitCrud.save(unitBoundary.toEntity());
                     }))
@@ -49,14 +54,17 @@ public class UnitServiceImp implements UnitService {
             return this.unitCrud.findById(unitBoundary.getId())
                     .flatMap(unitEntity -> Mono.error(new NotFound404("Unit already exists")))
                     .switchIfEmpty(Mono.defer(() -> {
+                        unitBoundary.setSubUnits(null);
                         unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
                         return Mono.just(unitBoundary.toEntity());
+
                     }))
                     .zipWith(this.unitCrud.findById(existingParentUnitId))
                     .switchIfEmpty(Mono.error(new NotFound404("not found existing")))
                     .flatMap(tuple -> {
 
                         UnitEntity child = (UnitEntity) tuple.getT1();
+                        child.setSubUnits(new HashSet<>());
                         UnitEntity parent = tuple.getT2();
                         child.setParent(parent);
                         return this.unitCrud.save(child);
@@ -93,6 +101,7 @@ public class UnitServiceImp implements UnitService {
                         unitEntity.setSubUnits(new HashSet<>());
                     }
                     unitEntity.getSubUnits().add(units);
+                    System.out.println(unitEntity.getId()+"   "+units.getId()+unitEntity.getSubUnits().contains(units));
                     ;return  this.unitCrud.save(unitEntity);}).then();
     }
 
@@ -127,6 +136,11 @@ public class UnitServiceImp implements UnitService {
         return this.unitCrud.findAllByIdNotNull(PageRequest.of(page, size, Sort.Direction.ASC, "createdTimestamp", "name", "id"))
                 .map(UnitBoundary::new)
                 .log();
+    }
+
+    @Override
+    public Flux<UnitBoundary> getAllSUBUnits() {
+        return null;
     }
 
     @Override
@@ -179,6 +193,29 @@ public class UnitServiceImp implements UnitService {
     public Mono<UnitBoundary> saveUnit(UnitEntity unitEntity) {
         return this.unitCrud.save(unitEntity).map(UnitBoundary::new).log();
     }
+@Override
+    public Flux<UnitBoundary> getSubUnits(UnitEntity fromId, int size, int page) {
+return this.unitCrud.findAllByParentIdContains(
+        fromId.getId(),
+        PageRequest.of(page, size, Sort.Direction.ASC, "id"))
+                .map(this::toBoundary)
+                .log();
+    }
 
+    @Override
+    public Mono<Void> checkIfExist(UnitEntity unit) {
+        return this.unitCrud.findById(unit.getId())
+                .then();
+    }
 
+    //what we want to see after subUnits
+    public UnitBoundary toBoundary(UnitEntity unit)
+    {
+        UnitBoundary unitBoundary=new UnitBoundary();
+        unitBoundary.setId(unit.getId());
+        unitBoundary.setType(unit.getType());
+        unitBoundary.setManager(new Manager(unit.getEmailManager()));
+
+        return  unitBoundary;
+    }
 }

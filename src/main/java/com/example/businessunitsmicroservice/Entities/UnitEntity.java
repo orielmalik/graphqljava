@@ -17,6 +17,7 @@ public class UnitEntity {
     private String  emailManager;
     private Set<UnitEntity> subUnits;
     private Set<String> emailsEmpolyee;
+    private Set<String> parentIds;
     private UnitEntity parent;
 
 
@@ -77,5 +78,13 @@ public class UnitEntity {
 
     public void setEmailsEmpolyee(Set<String> emailsEmpolyee) {
         this.emailsEmpolyee = emailsEmpolyee;
+    }
+
+    public Set<String> getParentIds() {
+        return parentIds;
+    }
+
+    public void setParentIds(Set<String> parentIds) {
+        this.parentIds = parentIds;
     }
 }

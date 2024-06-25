@@ -8,6 +8,10 @@ public class Manager {
 
     public Manager(){}
 
+    public Manager(String emailManager) {
+        this.email=emailManager;
+    }
+
     public String getEmail() {
         return email;
     }

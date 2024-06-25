@@ -24,10 +24,12 @@ public interface UnitService {
     Mono<UnitBoundary> getSpecificUnitById(String id);
 
     Flux<UnitBoundary> getAllUnits(int page, int size);
+    Flux<UnitBoundary> getAllSUBUnits();
 
     Mono<Void>connectToParent();
     Mono<Void>connect(String parent,String child);
-
+    public Flux<UnitBoundary> getSubUnits(UnitEntity fromId, int size, int page) ;
+    Mono<Void>checkIfExist(UnitEntity unit);
 
     Mono<UnitBoundary> saveUnit(UnitEntity unitEntity);
 }

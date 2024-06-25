@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -57,27 +58,30 @@ public class UnitInitializer implements CommandLineRunner {
                         .flatMap(d->{
                             d.setManager(createManagerForUnit(d.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
-                           // d.setParentUnit(new ParentUnit(unitBoundary));
+                            // d.setParentUnit(new ParentUnit(unitBoundary));
+                            d.setType(" GROUP AST");
 
                             return this.UnitService.create(root.getId(),d)
-                                    .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),root.getId());})
+                                    .flatMap(unitBoundary1 -> {;return this.UnitService.bindUnits(unitBoundary1.toEntity(),root.getId());})
                                     .then(Mono.just(d));
                         })
                         .log()
                         .collectList()
                         .block();
-UnitBoundary rd=this.UnitService.getById("R&D").block();
-UnitBoundary core=this.UnitService.create("R&D",new UnitBoundary("Core_Division"))
-        .map(unitBoundary1 -> {unitBoundary1.setManager(createManagerForUnit(unitBoundary.getId()));return unitBoundary.toEntity();} )
-        .flatMap(unitEntity -> {return this.UnitService.saveUnit(unitEntity);}).block();
-
-          List<UnitBoundary> rd_children =
+        UnitBoundary rd=this.UnitService.getById("R&D").block();
+        UnitBoundary c=new UnitBoundary("Core_Division");
+        c.setManager(createManagerForUnit(c.getId()));
+        UnitBoundary core=this.UnitService.create("R&D",c)
+                .block();
+        List<UnitBoundary> rd_children =
                 Flux.just( "Cloud_Team","DevOps_Team")
                         .map(UnitBoundary::new)
                         .flatMap(d->{
                             d.setManager(createManagerForUnit(d.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
-                            //d.setParentUnit(new ParentUnit(rd));
+                            d.setParentUnit(core);
+                            d.setType("develop GROUP");
+
                             return this.UnitService.create(core.getId(),d)
                                     .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),core.getId());})
                                     .then(Mono.just(d));
@@ -86,13 +90,14 @@ UnitBoundary core=this.UnitService.create("R&D",new UnitBoundary("Core_Division"
                         .collectList()
                         .block();
 
- UnitBoundary  support=this.UnitService.getById("Support").block();
+        UnitBoundary  support=this.UnitService.getById("Support").block();
 
-          List<UnitBoundary> su_children =
+        List<UnitBoundary> su_children =
                 Flux.just("Third_Level_Support", "Post_Sale")
                         .map(UnitBoundary::new)
                         .flatMap(d->{
-                          //  d.setParentUnit(new ParentUnit(support));
+                            //  d.setParentUnit(new ParentUnit(support));
+                            d.setType("IT GROUP");
                             d.setManager(createManagerForUnit(d.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                             return this.UnitService.create(support.getId(),d)
@@ -102,12 +107,10 @@ UnitBoundary core=this.UnitService.create("R&D",new UnitBoundary("Core_Division"
                         .log()
                         .collectList()
                         .block();
-
-
     }
 
-private void  pl(UnitBoundary unitBoundary)
-{
+    private void  pl(UnitBoundary unitBoundary)
+    {
 
 
         if (unitBoundary.getSubUnits() != null) {
@@ -119,8 +122,8 @@ private void  pl(UnitBoundary unitBoundary)
                     }
                 }
 
+            }
         }
-    }
     }
 
 
