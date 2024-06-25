@@ -1,7 +1,6 @@
-package com.example.businessunitsmicroservice.Entities;
+package com.example.businessunitsmicroservice.Initilazer;
 
 import com.example.businessunitsmicroservice.Boundaries.Manager;
-import com.example.businessunitsmicroservice.Boundaries.ParentUnit;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
 import com.example.businessunitsmicroservice.Interfaces.UnitService;
 import com.example.businessunitsmicroservice.Tools.ValidationUtils;
@@ -10,9 +9,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -69,18 +66,20 @@ public class UnitInitializer implements CommandLineRunner {
                         .log()
                         .collectList()
                         .block();
-
-      UnitBoundary  rd=this.UnitService.getById("R&D").block();
+UnitBoundary rd=this.UnitService.getById("R&D").block();
+UnitBoundary core=this.UnitService.create("R&D",new UnitBoundary("Core_Division"))
+        .map(unitBoundary1 -> {unitBoundary1.setManager(createManagerForUnit(unitBoundary.getId()));return unitBoundary.toEntity();} )
+        .flatMap(unitEntity -> {return this.UnitService.saveUnit(unitEntity);}).block();
 
           List<UnitBoundary> rd_children =
-                Flux.just("Core_Division", "Cloud_Team","DevOps_Team")
+                Flux.just( "Cloud_Team","DevOps_Team")
                         .map(UnitBoundary::new)
                         .flatMap(d->{
                             d.setManager(createManagerForUnit(d.getId()));
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                             //d.setParentUnit(new ParentUnit(rd));
-                            return this.UnitService.create(rd.getId(),d)
-                                    .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),rd.getId());})
+                            return this.UnitService.create(core.getId(),d)
+                                    .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),core.getId());})
                                     .then(Mono.just(d));
                         })
                         .log()
@@ -103,8 +102,7 @@ public class UnitInitializer implements CommandLineRunner {
                         .log()
                         .collectList()
                         .block();
-//my check function
-        this.UnitService.connectToParent().block();
+
 
     }
 

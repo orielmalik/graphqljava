@@ -26,4 +26,8 @@ public interface UnitService {
     Flux<UnitBoundary> getAllUnits(int page, int size);
 
     Mono<Void>connectToParent();
+    Mono<Void>connect(String parent,String child);
+
+
+    Mono<UnitBoundary> saveUnit(UnitEntity unitEntity);
 }

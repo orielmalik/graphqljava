@@ -17,7 +17,7 @@ public class UnitBoundary {
     private EmployeeBoundary[]employees;
     private UnitBoundary[]subUnits;
     private String creationDate;
-    private ParentUnit parentUnit;
+    private UnitBoundary parentUnit;
 
     public UnitBoundary(){}
 
@@ -30,7 +30,9 @@ public class UnitBoundary {
         setType(unitEntity.getType());
         setCreationDate(ValidationUtils.dateToString(unitEntity.getCreationDate()));
         if(unitEntity.getParent()!=null){
-            setParentUnit(new ParentUnit(new UnitBoundary(unitEntity.getParent())));}
+
+            setParentUnit(new UnitBoundary(unitEntity.getParent()));
+        }
         if(unitEntity.getSubUnits()!=null)
         {
             setSubUnits(ValidationUtils.convertHashSetToArray(unitEntity.getSubUnits(), unitEntity));
@@ -56,15 +58,18 @@ public class UnitBoundary {
                 unitEntity.setCreationDate(date);
             }catch (ParseException p)
             {
-
             }
 
         }
-        unitEntity.setEmailManager(getManager().getEmail());
+        if(getManager()!=null&&getManager().getEmail()!=null) {
+            unitEntity.setEmailManager(getManager().getEmail());
+        }
         unitEntity.setId(getId());
-        unitEntity.setType(getType());
+        if(type!=null) {
+            unitEntity.setType(getType());
+        }
         if(getParentUnit()!=null) {
-            unitEntity.setParent(getParentUnit().getUnitBoundary().toEntity());
+            unitEntity.setParent(getParentUnit().toEntity());
         }
         unitEntity.setSubUnits(new HashSet<>());
         if(getSubUnits()!=null) {
@@ -125,11 +130,11 @@ public class UnitBoundary {
         this.creationDate = creationDate;
     }
 
-    public ParentUnit getParentUnit() {
+    public UnitBoundary getParentUnit() {
         return parentUnit;
     }
 
-    public void setParentUnit(ParentUnit parentUnit) {
+    public void setParentUnit(UnitBoundary parentUnit) {
         this.parentUnit = parentUnit;
     }
 
@@ -140,31 +145,5 @@ public class UnitBoundary {
     public void setSubUnits(UnitBoundary[] subUnits) {
         this.subUnits = subUnits;
     }
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("UnitBoundary {")
-                .append("id='").append(id).append("', ")
-                .append("type='").append(type).append("', ")
-                .append("manager=").append(manager == null ? "null" : manager.getEmail().toString())
-                .append(", ")
-                .append("creationDate='").append(creationDate).append("'");
 
-        if (subUnits != null && subUnits.length > 0) {
-            sb.append(", subUnits=[");
-            for (int i = 0; i < subUnits.length; i++) {
-                if (subUnits[i] != null) {
-                    sb.append(subUnits[i].toString()).append(", ");
-                } else {
-                    sb.append("null, ");
-                }
-            }
-            sb.setLength(sb.length() - 2); // Remove trailing comma and space
-            sb.append("]");
-        }
-
-        sb.append(", parentUnit=").append(parentUnit == null ? "null" : parentUnit.toString())
-                .append("}");
-        return sb.toString();
-    }
 }

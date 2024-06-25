@@ -11,7 +11,7 @@ type UnitBoundary {
     employees: [EmployeeBoundary]
     subUnits: [UnitBoundary]
     creationDate: String
-    parentUnit: ParentUnit
+    parentUnit: UnitBoundary
 }
 
 type EmployeeBoundary {
@@ -26,8 +26,6 @@ type Manager {
 }
 
 
-type ParentUnit {
-    unitBoundary: UnitBoundary
-}
+
 
 
