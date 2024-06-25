@@ -1,5 +1,6 @@
 package com.example.businessunitsmicroservice.Services;
 
+import com.example.businessunitsmicroservice.Boundaries.EmployeeBoundary;
 import com.example.businessunitsmicroservice.Boundaries.Manager;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
@@ -193,7 +194,27 @@ public class UnitServiceImp implements UnitService {
     public Mono<UnitBoundary> saveUnit(UnitEntity unitEntity) {
         return this.unitCrud.save(unitEntity).map(UnitBoundary::new).log();
     }
-@Override
+
+    @Override
+    public Mono<EmployeeBoundary> getEmployeeFromAllUnits(String email) {
+        return this.unitCrud.findByEmailsEmpolyeeContains(email)
+                .map(unit -> {
+                    return new UnitBoundary(unit);
+                    })
+                .map(unitBoundary -> {
+                    for (int i = 0; i < unitBoundary.getEmployees().length; i++) {
+                        if(!email.isEmpty()&&email.equals(unitBoundary.getEmployees()[i].getEmail()))
+                        {
+                            return (unitBoundary.getEmployees()[i]);
+                        }
+                    }
+                    return new EmployeeBoundary("");//if not found
+                }).flatMap(employeeBoundary -> { return Mono.just(employeeBoundary);})
+                .log()
+                ;
+    }
+
+    @Override
     public Flux<UnitBoundary> getSubUnits(UnitEntity fromId, int size, int page) {
 return this.unitCrud.findAllByParentIdContains(
         fromId.getId(),

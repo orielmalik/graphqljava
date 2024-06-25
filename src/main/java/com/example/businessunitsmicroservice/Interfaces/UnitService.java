@@ -1,5 +1,6 @@
 package com.example.businessunitsmicroservice.Interfaces;
 
+import com.example.businessunitsmicroservice.Boundaries.EmployeeBoundary;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
 import reactor.core.publisher.Flux;
@@ -32,4 +33,7 @@ public interface UnitService {
     Mono<Void>checkIfExist(UnitEntity unit);
 
     Mono<UnitBoundary> saveUnit(UnitEntity unitEntity);
+
+    public Mono<EmployeeBoundary> getEmployeeFromAllUnits(String email) ;
+
 }

@@ -21,10 +21,10 @@ public class UnitGraphQlController {
 
 
     @QueryMapping
-    public Mono<UnitBoundary> getSpecificUnit(@Argument String id) {
+    public Mono<EmployeeBoundary> employee(@Argument String id) {
         return this.unitService
-                .getSpecificUnitById(id)
-                .log();
+                .getEmployeeFromAllUnits(id)
+                                .log();
     }
 
 

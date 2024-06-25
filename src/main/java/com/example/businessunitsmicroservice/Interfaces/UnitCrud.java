@@ -18,8 +18,11 @@ public interface UnitCrud extends ReactiveMongoRepository<UnitEntity,String> {
     //public Mono<UnitEntity> findById(String id);
     public Flux<UnitEntity> findAllByIdNotNull(Pageable pageable);
 
-    public Flux<UnitEntity> findAllByEmailsEmpolyeeContains(@Param("emailId") String emailId,Pageable pageable);
+    public Mono<UnitEntity> findByEmailsEmpolyeeContains(@Param("emailId") String emailId);
 
+    //TO EYAL:we know we can do the same with  query findByParentId and put at Entity String
+    //but you said Action Freedom"חופש פעולה"
+    //dont remove never a letter
     public Flux<UnitEntity> findAllByParentIdContains(@Param("fromId") String fromId,Pageable pageable);
 
 }

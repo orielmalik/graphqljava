@@ -2,6 +2,7 @@ package com.example.businessunitsmicroservice.Tools;
 
 import com.example.businessunitsmicroservice.Boundaries.EmployeeBoundary;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
+import com.example.businessunitsmicroservice.Entities.EmployeeEntity;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
 
 import java.text.ParseException;
@@ -116,10 +117,12 @@ public class ValidationUtils {
         for (EmployeeBoundary employee : employees) {
             if (employee.getEmail() != null) {
                 emailSet.add(employee.getEmail());
+
             }
         }
         return emailSet;
     }
+
 
     // הפונקציה השנייה: קבלת Set של כתובות ה-Email והחזרת מערך של EmployeeBoundary
     public static EmployeeBoundary[] createEmployeesFromEmails(Set<String> emails) {

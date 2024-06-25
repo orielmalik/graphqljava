@@ -1,5 +1,6 @@
 package com.example.businessunitsmicroservice.Initilazer;
 
+import com.example.businessunitsmicroservice.Boundaries.EmployeeBoundary;
 import com.example.businessunitsmicroservice.Boundaries.Manager;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
 import com.example.businessunitsmicroservice.Interfaces.UnitService;
@@ -33,6 +34,7 @@ public class UnitInitializer implements CommandLineRunner {
         manager.setEmail("ceo@gmail.com");
         unitBoundary.setManager(manager);
         unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
+        unitBoundary.setEmployees(new EmployeeBoundary[]{new EmployeeBoundary("g@gmail.com"),new EmployeeBoundary("k@gmail.com")});
         UnitBoundary root = this.UnitService.create("",unitBoundary)
                 .block();
 

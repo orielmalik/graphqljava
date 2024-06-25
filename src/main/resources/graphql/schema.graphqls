@@ -1,6 +1,6 @@
 type Query {
     unit(id: ID): UnitBoundary
-    employee(email: String): EmployeeBoundary
+    employee(email: ID): EmployeeBoundary
     allUnits(size: Int, page: Int): [UnitBoundary]
 }
 
@@ -17,8 +17,8 @@ type UnitBoundary {
 
 type EmployeeBoundary {
     email: String
-    Units: [UnitBoundary]
-    manager: UnitBoundary
+    units: [UnitBoundary]
+    manages: [UnitBoundary]
 
 }
 

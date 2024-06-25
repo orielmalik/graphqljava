@@ -44,4 +44,14 @@ public EmployeeBoundary(EmployeeEntity employeeEntity)
     public void setManages(UnitBoundary[] manages) {
         this.manages = manages;
     }
+
+    public EmployeeEntity toEntity() {
+    EmployeeEntity employeeEntity=new EmployeeEntity();
+
+           employeeEntity.setUnits(employeeEntity.getUnits());
+
+
+
+            return  employeeEntity;
+    }
 }

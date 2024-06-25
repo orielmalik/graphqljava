@@ -1,5 +1,6 @@
 package com.example.businessunitsmicroservice.Boundaries;
 
+import com.example.businessunitsmicroservice.Entities.EmployeeEntity;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
 import com.example.businessunitsmicroservice.Tools.ValidationUtils;
 
@@ -37,10 +38,11 @@ public class UnitBoundary {
             setSubUnits(ValidationUtils.convertHashSetToArray(unitEntity.getSubUnits(), unitEntity));
 
         }
-        if(unitEntity.getEmailsEmpolyee()!=null) {
-            setEmployees(ValidationUtils.createEmployeesFromEmails(unitEntity.getEmailsEmpolyee()));
-        }
-    }
+        if(unitEntity.getEmployees()!=null) {
+            //UnitBoundary[] arr=new UnitBoundary[unitEntity.getEmployees().size()];
+           setEmployees(ValidationUtils.createEmployeesFromEmails(unitEntity.getEmailsEmpolyee()));
+
+    }}
 
     public UnitBoundary(String id) {
         this.id=id;
