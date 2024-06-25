@@ -215,6 +215,20 @@ public class UnitServiceImp implements UnitService {
     }
 
     @Override
+    public Flux<UnitBoundary> getUnitsForEmployee(String employeeEmail, int page, int size) {
+        // Implementation to get units for a specific employee
+        return this.unitCrud.findAllByEmployeesEmail(employeeEmail, PageRequest.of(page, size))
+                .map(this::toBoundary);
+    }
+
+    @Override
+    public Flux<UnitBoundary> getManagedUnitsForEmployee(String employeeEmail, int page, int size) {
+        // Implementation to get managed units for a specific employee
+        return this.unitCrud.findAllByManagersEmail(employeeEmail, PageRequest.of(page, size))
+                .map(this::toBoundary);
+    }
+
+    @Override
     public Flux<UnitBoundary> getSubUnits(UnitEntity fromId, int size, int page) {
 return this.unitCrud.findAllByParentIdContains(
         fromId.getId(),

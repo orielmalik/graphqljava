@@ -36,4 +36,10 @@ public interface UnitService {
 
     public Mono<EmployeeBoundary> getEmployeeFromAllUnits(String email) ;
 
+    Flux<UnitBoundary> getUnitsForEmployee(String employeeEmail, int page, int size);
+
+    Flux<UnitBoundary> getManagedUnitsForEmployee(String employeeEmail, int page, int size);
+
+
+
 }

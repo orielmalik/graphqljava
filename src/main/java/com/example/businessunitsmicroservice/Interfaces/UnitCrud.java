@@ -25,4 +25,10 @@ public interface UnitCrud extends ReactiveMongoRepository<UnitEntity,String> {
     //dont remove never a letter
     public Flux<UnitEntity> findAllByParentIdContains(@Param("fromId") String fromId,Pageable pageable);
 
+    @Query("{ 'employees.email': ?0 }")
+    Flux<UnitEntity> findAllByEmployeesEmail(@Param("email") String email, Pageable pageable);
+
+    @Query("{ 'managers.email': ?0 }")
+    Flux<UnitEntity> findAllByManagersEmail(@Param("email") String email, Pageable pageable);
+
 }
