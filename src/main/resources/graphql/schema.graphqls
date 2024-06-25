@@ -3,7 +3,6 @@ type Query {
     employee(email: ID): EmployeeBoundary
     allUnits(size: Int, page: Int): [UnitBoundary]
 }
-
 type UnitBoundary {
     id: ID
     type: String

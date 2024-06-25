@@ -55,29 +55,10 @@ public class UnitGraphQlController {
 
 
     @QueryMapping
-    public Mono<EmployeeBoundary> employee(@Argument String id) {
+    public Flux<EmployeeBoundary> employee(@Argument String id) {
         return this.unitService
-                .getEmployeeFromAllUnits(id)
-                .flatMap(employee -> {
-                    // Fetch units and managed units with pagination
-                    Mono<UnitBoundary[]> unitsMono = this.unitService
-                            .getUnitsForEmployee(employee.getEmail(), 0, 10) // Example values for pagination
-                            .collectList()
-                            .map(list -> list.toArray(new UnitBoundary[0]));
+                .getEmployeeFromAllUnits(id);
 
-                    Mono<UnitBoundary[]> managesMono = this.unitService
-                            .getManagedUnitsForEmployee(employee.getEmail(), 0, 10) // Example values for pagination
-                            .collectList()
-                            .map(list -> list.toArray(new UnitBoundary[0]));
-
-                    return Mono.zip(unitsMono, managesMono)
-                            .map(tuple -> {
-                                employee.setUnits(tuple.getT1());
-                                employee.setManages(tuple.getT2());
-                                return employee;
-                            });
-                })
-                .log();
     }
 
 }

@@ -102,7 +102,6 @@ public class UnitServiceImp implements UnitService {
                         unitEntity.setSubUnits(new HashSet<>());
                     }
                     unitEntity.getSubUnits().add(units);
-                    System.out.println(unitEntity.getId()+"   "+units.getId()+unitEntity.getSubUnits().contains(units));
                     ;return  this.unitCrud.save(unitEntity);}).then();
     }
 
@@ -196,37 +195,26 @@ public class UnitServiceImp implements UnitService {
     }
 
     @Override
-    public Mono<EmployeeBoundary> getEmployeeFromAllUnits(String email) {
-        return this.unitCrud.findByEmailsEmpolyeeContains(email)
+    public Flux<EmployeeBoundary> getEmployeeFromAllUnits(String email) {
+        return this.unitCrud.findAllByEmailsEmpolyeeContains(email)
                 .map(unit -> {
                     return new UnitBoundary(unit);
                     })
                 .map(unitBoundary -> {
+                    if(unitBoundary.getEmployees()!=null){
                     for (int i = 0; i < unitBoundary.getEmployees().length; i++) {
                         if(!email.isEmpty()&&email.equals(unitBoundary.getEmployees()[i].getEmail()))
                         {
+                            System.out.println("getE"+unitBoundary.getId());
                             return (unitBoundary.getEmployees()[i]);
                         }
-                    }
+                    }}
                     return new EmployeeBoundary("");//if not found
-                }).flatMap(employeeBoundary -> { return Mono.just(employeeBoundary);})
+                }).flatMap(employeeBoundary -> { return Flux.just(employeeBoundary);})
                 .log()
                 ;
     }
 
-    @Override
-    public Flux<UnitBoundary> getUnitsForEmployee(String employeeEmail, int page, int size) {
-        // Implementation to get units for a specific employee
-        return this.unitCrud.findAllByEmployeesEmail(employeeEmail, PageRequest.of(page, size))
-                .map(this::toBoundary);
-    }
-
-    @Override
-    public Flux<UnitBoundary> getManagedUnitsForEmployee(String employeeEmail, int page, int size) {
-        // Implementation to get managed units for a specific employee
-        return this.unitCrud.findAllByManagersEmail(employeeEmail, PageRequest.of(page, size))
-                .map(this::toBoundary);
-    }
 
     @Override
     public Flux<UnitBoundary> getSubUnits(UnitEntity fromId, int size, int page) {
