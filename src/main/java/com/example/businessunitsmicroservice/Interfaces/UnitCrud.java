@@ -24,6 +24,7 @@ public interface UnitCrud extends ReactiveMongoRepository<UnitEntity,String> {
     @Query("{ 'emailManager' : { '$ne' : null } }")
     Flux<UnitEntity> findAllByEmailManagerNotNull(Pageable pageable);
 
+    Flux<UnitEntity> findAllBy(Pageable pageable);
 
 
 

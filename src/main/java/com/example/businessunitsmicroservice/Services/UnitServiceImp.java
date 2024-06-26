@@ -227,7 +227,7 @@ public class UnitServiceImp implements UnitService {
 
     @Override
     public Flux<UnitBoundary> getEmployeeUnits(EmployeeEntity entity, int size, int page) {
-        return this.unitCrud.findAll()
+        return this.unitCrud.findAllBy(PageRequest.of(page,size, Sort.Direction.ASC,"createdTimestamp","id"))
                 .flatMap(unit -> {
                     if(unit.getEmailsEmpolyee()!=null){
                     if(unit.getId()!=null&&unit.getEmailsEmpolyee().contains(entity.getEmail()))
@@ -240,17 +240,19 @@ public class UnitServiceImp implements UnitService {
                 }).log();
     }
 
+
     @Override
     public Flux<UnitBoundary> getEmployeemanages(EmployeeEntity entity, int size, int page) {
-        return this.unitCrud.findAllByEmailManagerNotNull(
-                  PageRequest.of(page, size, Sort.Direction.ASC, "createdTimestamp","id"))
-                .map(unit -> {
+       //could also another options
+        return this.unitCrud.findAllBy(PageRequest.of(page,size, Sort.Direction.ASC,"createdTimestamp","id"))
+                .flatMap(unit -> {
                     if(unit.getEmailManager().equals(entity.getEmail())) {
-                        return new UnitBoundary(unit);
+                        return Flux.just(new UnitBoundary(unit));
                     }
-                    return null;
+                    return Flux.empty();
 
                 })
+
                 .log();
 
     }

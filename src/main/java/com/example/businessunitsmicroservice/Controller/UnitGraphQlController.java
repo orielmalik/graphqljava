@@ -66,6 +66,7 @@ public class UnitGraphQlController {
             @Argument int size) {
         return this.unitService.getEmployeesbyUnits(dummy.toEntity(), size, page).log();
     }
+    @SchemaMapping
     public Flux<UnitBoundary> manages(
             EmployeeBoundary dummy,
             @Argument int page,
