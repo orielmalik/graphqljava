@@ -7,11 +7,15 @@ type UnitBoundary {
     id: ID
     type: String
     manager: Manager
-    employees: [EmployeeBoundary]
+    employees(size: Int, page: Int): [EmployeesBoundary]
     creationDate: String
     parentUnit: UnitBoundary
     subUnits(size: Int, page: Int): [UnitBoundary]
 
+}
+
+type EmployeesBoundary {
+    email:String
 }
 
 type EmployeeBoundary {
@@ -23,7 +27,6 @@ type EmployeeBoundary {
 type Manager {
     email: String
 }
-
 
 
 

@@ -2,6 +2,7 @@ package com.example.businessunitsmicroservice.Interfaces;
 
 import com.example.businessunitsmicroservice.Boundaries.EmployeeBoundary;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
+import com.example.businessunitsmicroservice.Boundaries.employees;
 import com.example.businessunitsmicroservice.Entities.EmployeeEntity;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
 import reactor.core.publisher.Flux;
@@ -48,4 +49,8 @@ public interface UnitService {
     public Flux<UnitBoundary> getEmployeeUnits(EmployeeEntity entity, int size, int page);
 
     public Flux<UnitBoundary> getEmployeemanages(EmployeeEntity entity, int size, int page);
+
+    public Flux<employees> getEmployeesbyUnits(EmployeeEntity entity, int size, int page) ;
+
+
 }

@@ -3,6 +3,7 @@ package com.example.businessunitsmicroservice.Services;
 import com.example.businessunitsmicroservice.Boundaries.EmployeeBoundary;
 import com.example.businessunitsmicroservice.Boundaries.Manager;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
+import com.example.businessunitsmicroservice.Boundaries.employees;
 import com.example.businessunitsmicroservice.Entities.EmployeeEntity;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
 import com.example.businessunitsmicroservice.Exceptions.BadRequest400;
@@ -241,11 +242,45 @@ public class UnitServiceImp implements UnitService {
 
     @Override
     public Flux<UnitBoundary> getEmployeemanages(EmployeeEntity entity, int size, int page) {
-        return this.unitCrud.findAllByEmailManagerIs(entity.getEmail()
-                ,  PageRequest.of(page, size, Sort.Direction.ASC, "emailManager"))
-                .map(UnitBoundary::new)
+        return this.unitCrud.findAllByEmailManagerNotNull(
+                  PageRequest.of(page, size, Sort.Direction.ASC, "createdTimestamp","id"))
+                .map(unit -> {
+                    if(unit.getEmailManager().equals(entity.getEmail())) {
+                        return new UnitBoundary(unit);
+                    }
+                    return null;
+
+                })
                 .log();
 
+    }
+
+    @Override
+    public Flux<employees> getEmployeesbyUnits(EmployeeEntity entity, int size, int page) {
+        return this.unitCrud.findAllByIdNotNull(PageRequest.of(page, size, Sort.Direction.ASC, "createdTimestamp", "name", "id"))
+                .map(unit ->
+                {
+                    if(unit.getEmailsEmpolyee()!=null&&!unit.getEmailsEmpolyee().isEmpty())
+                    {
+                        UnitBoundary unitBoundary=new UnitBoundary(unit);
+                        for (int i = 0; i < unitBoundary.getEmployees().length; i++) {
+                            if(unitBoundary.getEmployees()[i]!=null) {
+                                return unitBoundary.getEmployees()[i];
+                            }
+
+                        }
+                    }
+                    return new EmployeeBoundary("");//i did empty is more comfortable than
+                })
+                .flatMap( employeeBoundary ->
+                {
+                    if(!employeeBoundary.getEmail().isEmpty())
+                    {
+                        return Flux.just(new employees(employeeBoundary.getEmail()));
+                    }
+                    return Flux.empty();
+                })
+                .log();
     }
 
     private  EmployeeBoundary  boundaryEmp(String e)
