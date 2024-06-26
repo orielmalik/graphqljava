@@ -5,11 +5,13 @@ import com.example.businessunitsmicroservice.Boundaries.Manager;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
 import com.example.businessunitsmicroservice.Interfaces.UnitService;
 import com.example.businessunitsmicroservice.Tools.ValidationUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +36,6 @@ public class UnitInitializer implements CommandLineRunner {
         manager.setEmail("ceo@gmail.com");
         unitBoundary.setManager(manager);
         unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
-        unitBoundary.setEmployees(new EmployeeBoundary[]{new EmployeeBoundary("g@gmail.com"),new EmployeeBoundary("k@gmail.com")});
         UnitBoundary root = this.UnitService.create("",unitBoundary)
                 .block();
 
@@ -83,6 +84,7 @@ public class UnitInitializer implements CommandLineRunner {
                             d.setCreationDate(ValidationUtils.dateToString(new Date()));
                             d.setParentUnit(core);
                             d.setType("develop GROUP");
+                            d.setEmployees(new EmployeeBoundary[]{new EmployeeBoundary("ceo@gmail.com"),new EmployeeBoundary("manager@rnd.demo.org")});
 
                             return this.UnitService.create(core.getId(),d)
                                     .flatMap(unitBoundary1 -> {return this.UnitService.bindUnits(unitBoundary1.toEntity(),core.getId());})
@@ -93,7 +95,7 @@ public class UnitInitializer implements CommandLineRunner {
                         .block();
 
         UnitBoundary  support=this.UnitService.getById("Support").block();
-
+        //this.UnitService.getEmployeeFromAllUnits("g@gmail.com").then().block();
         List<UnitBoundary> su_children =
                 Flux.just("Third_Level_Support", "Post_Sale")
                         .map(UnitBoundary::new)

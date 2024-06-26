@@ -44,6 +44,7 @@ public class UnitGraphQlController {
         return this.unitService.getSpecificUnitById(id)
                 .log();
     }
+//pagination
 
     @SchemaMapping
     public Flux<UnitBoundary> subUnits(
@@ -51,14 +52,25 @@ public class UnitGraphQlController {
             @Argument int page,
             @Argument int size) {
         return this.unitService.getSubUnits(dummy.toEntity(), size, page).log();
+    }   @SchemaMapping
+    public Flux<UnitBoundary> units(
+            EmployeeBoundary dummy,
+            @Argument int page,
+            @Argument int size) {
+        return this.unitService.getEmployeeUnits(dummy.toEntity(), size, page).log();
+    }
+    public Flux<UnitBoundary> manages(
+            EmployeeBoundary dummy,
+            @Argument int page,
+            @Argument int size) {
+        return this.unitService.getEmployeemanages(dummy.toEntity(), size, page).log();
     }
 
 
     @QueryMapping
-    public Flux<EmployeeBoundary> employee(@Argument String id) {
+    public Mono<EmployeeBoundary> employee(@Argument String email) {
         return this.unitService
-                .getEmployeeFromAllUnits(id);
-
+                .getEmployeeFromAllUnits(email);
     }
 
 }

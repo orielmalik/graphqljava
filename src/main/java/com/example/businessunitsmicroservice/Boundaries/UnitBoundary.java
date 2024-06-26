@@ -23,6 +23,7 @@ public class UnitBoundary {
 
     public UnitBoundary(UnitEntity unitEntity)
     {
+
         setEmployees(getEmployees());
         setId(unitEntity.getId());
         Manager man=new Manager();man.setEmail(unitEntity.getEmailManager());
@@ -38,14 +39,20 @@ public class UnitBoundary {
             setSubUnits(ValidationUtils.convertHashSetToArray(unitEntity.getSubUnits(), unitEntity));
 
         }
-        if(unitEntity.getEmployees()!=null) {
-            //UnitBoundary[] arr=new UnitBoundary[unitEntity.getEmployees().size()];
+        if(unitEntity.getEmailsEmpolyee()!=null) {
+            //UnitBoundary[] 0arr=new UnitBoundary[unitEntity.getEmployees().size()];
            setEmployees(ValidationUtils.createEmployeesFromEmails(unitEntity.getEmailsEmpolyee()));
 
-    }}
+    }else
+        {
+            unitEntity.setEmailsEmpolyee(new HashSet<>());
+        }
+    }
 
     public UnitBoundary(String id) {
+
         this.id=id;
+
     }
 
     public UnitEntity toEntity()

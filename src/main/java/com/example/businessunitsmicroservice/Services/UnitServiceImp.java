@@ -3,6 +3,7 @@ package com.example.businessunitsmicroservice.Services;
 import com.example.businessunitsmicroservice.Boundaries.EmployeeBoundary;
 import com.example.businessunitsmicroservice.Boundaries.Manager;
 import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
+import com.example.businessunitsmicroservice.Entities.EmployeeEntity;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
 import com.example.businessunitsmicroservice.Exceptions.BadRequest400;
 import com.example.businessunitsmicroservice.Exceptions.NotFound404;
@@ -112,7 +113,11 @@ public class UnitServiceImp implements UnitService {
 
     @Override
     public Mono<UnitBoundary> getById(String id) {
-        return this.unitCrud.findById(id).map(UnitBoundary::new);
+
+        return this.unitCrud.findById(id).map( unit -> {
+            if(unit.getEmailsEmpolyee()!=null)
+            {}
+        ;return  new UnitBoundary(unit);});
     }
 
     @Override
@@ -195,26 +200,58 @@ public class UnitServiceImp implements UnitService {
     }
 
     @Override
-    public Flux<EmployeeBoundary> getEmployeeFromAllUnits(String email) {
-        return this.unitCrud.findAllByEmailsEmpolyeeContains(email)
+    public Mono<EmployeeBoundary> getEmployeeFromAllUnits(String email) {
+        return this.unitCrud.findFirstByEmailsEmpolyeeContains(email.replace(" ",""))
                 .map(unit -> {
-                    return new UnitBoundary(unit);
-                    })
-                .map(unitBoundary -> {
-                    if(unitBoundary.getEmployees()!=null){
+                    if(unit.getEmailsEmpolyee()==null)
+                    {
+                        unit.setEmailsEmpolyee(new HashSet<>());
+                    }
+                    UnitBoundary unitBoundary=new UnitBoundary(unit);
                     for (int i = 0; i < unitBoundary.getEmployees().length; i++) {
-                        if(!email.isEmpty()&&email.equals(unitBoundary.getEmployees()[i].getEmail()))
+                        if(unitBoundary.getEmployees()[i].getEmail().equals(email.replace(" ","")))
                         {
-                            System.out.println("getE"+unitBoundary.getId());
-                            return (unitBoundary.getEmployees()[i]);
+                           // System.out.println("i"+i+"unit"+unitBoundary.getEmployees()[i].getEmail());
+
+                            return unitBoundary.getEmployees()[i];
                         }
-                    }}
-                    return new EmployeeBoundary("");//if not found
-                }).flatMap(employeeBoundary -> { return Flux.just(employeeBoundary);})
-                .log()
-                ;
+                    }
+                return new EmployeeBoundary();
+                })
+               .log();
+
+
+
     }
 
+    @Override
+    public Flux<UnitBoundary> getEmployeeUnits(EmployeeEntity entity, int size, int page) {
+        return this.unitCrud.findAll()
+                .flatMap(unit -> {
+                    if(unit.getEmailsEmpolyee()!=null){
+                    if(unit.getId()!=null&&unit.getEmailsEmpolyee().contains(entity.getEmail()))
+                    {
+                        return Flux.just(new UnitBoundary(unit));
+                    }}
+                    return  Flux.empty();
+                }).map(unitBoundary -> {
+                   return unitBoundary;
+                }).log();
+    }
+
+    @Override
+    public Flux<UnitBoundary> getEmployeemanages(EmployeeEntity entity, int size, int page) {
+        return this.unitCrud.findAllByEmailManagerIs(entity.getEmail()
+                ,  PageRequest.of(page, size, Sort.Direction.ASC, "emailManager"))
+                .map(UnitBoundary::new)
+                .log();
+
+    }
+
+    private  EmployeeBoundary  boundaryEmp(String e)
+{
+    return  new EmployeeBoundary(e);
+}
 
     @Override
     public Flux<UnitBoundary> getSubUnits(UnitEntity fromId, int size, int page) {

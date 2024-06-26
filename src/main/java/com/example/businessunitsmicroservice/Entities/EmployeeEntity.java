@@ -3,12 +3,14 @@ package com.example.businessunitsmicroservice.Entities;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection = "EMPLOYEE")
 public class EmployeeEntity {
 
    @Id private String email;
-   private EmployeeEntity[]manages;
-   private UnitEntity[]units;
+   private List<UnitEntity> manages;
+   private List<UnitEntity>units;
 
     public EmployeeEntity(){}
 
@@ -20,19 +22,19 @@ public class EmployeeEntity {
         return email;
     }
 
-    public EmployeeEntity[] getManages() {
+    public List<UnitEntity> getManages() {
         return manages;
     }
 
-    public void setManages(EmployeeEntity[] manages) {
+    public void setManages(List<UnitEntity>manages) {
         this.manages = manages;
     }
 
-    public UnitEntity[] getUnits() {
+    public List<UnitEntity> getUnits() {
         return units;
     }
 
-    public void setUnits(UnitEntity[] units) {
+    public void setUnits(List<UnitEntity> units) {
         this.units = units;
     }
 }
