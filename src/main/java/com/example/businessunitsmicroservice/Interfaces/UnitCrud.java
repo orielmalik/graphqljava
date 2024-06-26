@@ -21,8 +21,7 @@ public interface UnitCrud extends ReactiveMongoRepository<UnitEntity,String> {
 
     public Mono<UnitEntity> findByEmailsEmpolyeeContains(@Param("email") String email);
 
-    @Query("{ 'emailManager' : { '$ne' : null } }")
-    Flux<UnitEntity> findAllByEmailManagerNotNull(Pageable pageable);
+
 
     Flux<UnitEntity> findAllBy(Pageable pageable);
 
@@ -30,6 +29,7 @@ public interface UnitCrud extends ReactiveMongoRepository<UnitEntity,String> {
 
     //TO EYAL:we know we can do the same with  query findByParentId and put at Entity String
     //but you said Action Freedom"חופש פעולה"
+
     //dont remove never a letter
     public Flux<UnitEntity> findAllByParentIdContains(@Param("fromId") String fromId,Pageable pageable);
     //@Query(value = "{ 'emailsEmpolyee' : { '$in' : [?0] } }")

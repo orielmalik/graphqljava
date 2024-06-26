@@ -5,8 +5,10 @@ import com.example.businessunitsmicroservice.Entities.UnitEntity;
 import com.example.businessunitsmicroservice.Tools.ValidationUtils;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 public class UnitBoundary {
 
@@ -41,9 +43,9 @@ public class UnitBoundary {
         }
         if(unitEntity.getEmailsEmpolyee()!=null) {
             //UnitBoundary[] 0arr=new UnitBoundary[unitEntity.getEmployees().size()];
-           setEmployees(ValidationUtils.createEmployeesFromEmails(unitEntity.getEmailsEmpolyee()));
-
-    }else
+            //setEmployees(ValidationUtils.createEmployeesFromEmails(unitEntity.getEmailsEmpolyee()));
+            setEmployees(ValidationUtils.createEmployeesFromEntities(unitEntity.getEmployees()));
+        }else
         {
             unitEntity.setEmailsEmpolyee(new HashSet<>());
         }
@@ -54,6 +56,8 @@ public class UnitBoundary {
         this.id=id;
 
     }
+
+
 
     public UnitEntity toEntity()
     {
@@ -85,7 +89,7 @@ public class UnitBoundary {
             unitEntity.getParentIds().add(getParentUnit().getId());
 
         }
-            unitEntity.setSubUnits(new HashSet<>());
+        unitEntity.setSubUnits(new HashSet<>());
 
         if(getSubUnits()!=null) {
             for (int i = 0; i < getSubUnits().length; i++) {
@@ -99,6 +103,7 @@ public class UnitBoundary {
 
         if(getEmployees()!=null) {
             unitEntity.setEmailsEmpolyee(ValidationUtils.extractEmails(getEmployees()));
+            unitEntity.setEmployees(ValidationUtils.extractmployee(getEmployees()));
         }
         //the rest i will fill after call with graphql
         return unitEntity;

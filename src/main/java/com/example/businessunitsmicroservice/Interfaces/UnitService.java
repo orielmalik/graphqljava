@@ -5,6 +5,7 @@ import com.example.businessunitsmicroservice.Boundaries.UnitBoundary;
 import com.example.businessunitsmicroservice.Boundaries.employees;
 import com.example.businessunitsmicroservice.Entities.EmployeeEntity;
 import com.example.businessunitsmicroservice.Entities.UnitEntity;
+import org.springframework.graphql.data.method.annotation.Argument;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -51,6 +52,28 @@ public interface UnitService {
     public Flux<UnitBoundary> getEmployeemanages(EmployeeEntity entity, int size, int page);
 
     public Flux<employees> getEmployeesbyUnits(EmployeeEntity entity, int size, int page) ;
+
+
+
+
+
+
+
+
+
+          public Mono<EmployeeBoundary> addEmployeeGraph( String unitId,  String email);
+          public Mono<UnitBoundary> addUnitGraph( String parentid,  String newid, String type, String emailmanager);
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

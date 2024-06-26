@@ -29,5 +29,11 @@ type Manager {
 }
 
 
+type Mutation {
+    addEmployee(unitId:ID, email:String):EmployeeBoundary
+    addUnit(parentUnitId:ID, newUnitId: ID, newUnitType:String, managerEmail:String):UnitBoundary
+
+}
+
 
 

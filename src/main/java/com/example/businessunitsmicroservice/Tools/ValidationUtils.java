@@ -121,12 +121,27 @@ public class ValidationUtils {
             }
         }
         return emailSet;
+    }  public static Set<EmployeeEntity> extractmployee(EmployeeBoundary[] employees) {
+        Set<EmployeeEntity> emailSet = new HashSet<>();
+        for (EmployeeBoundary employee : employees) {
+            if (employee.getEmail() != null) {
+                emailSet.add(employee.toEntity());
+
+            }
+        }
+        return emailSet;
     }
 
 
     // הפונקציה השנייה: קבלת Set של כתובות ה-Email והחזרת מערך של EmployeeBoundary
     public static EmployeeBoundary[] createEmployeesFromEmails(Set<String> emails) {
         return emails.stream()
+                .map(EmployeeBoundary::new)
+                .toArray(EmployeeBoundary[]::new);
+    }
+
+    public static EmployeeBoundary[] createEmployeesFromEntities(Set<EmployeeEntity> employees) {
+        return employees.stream()
                 .map(EmployeeBoundary::new)
                 .toArray(EmployeeBoundary[]::new);
     }

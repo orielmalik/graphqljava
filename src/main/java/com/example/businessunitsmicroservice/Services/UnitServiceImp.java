@@ -43,6 +43,7 @@ public class UnitServiceImp implements UnitService {
                     .switchIfEmpty(Mono.defer(() -> {
                         unitBoundary.setParentUnit(null);
                         unitBoundary.setType("managment");
+                        unitBoundary.setSubUnits(null);
                         unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
                         return this.unitCrud.save(unitBoundary.toEntity());
                     }))
@@ -58,6 +59,7 @@ public class UnitServiceImp implements UnitService {
                     .flatMap(unitEntity -> Mono.error(new NotFound404("Unit already exists")))
                     .switchIfEmpty(Mono.defer(() -> {
                         unitBoundary.setSubUnits(null);
+
                         unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
                         return Mono.just(unitBoundary.toEntity());
 
@@ -118,7 +120,7 @@ public class UnitServiceImp implements UnitService {
         return this.unitCrud.findById(id).map( unit -> {
             if(unit.getEmailsEmpolyee()!=null)
             {}
-        ;return  new UnitBoundary(unit);});
+            ;return  new UnitBoundary(unit);});
     }
 
     @Override
@@ -184,13 +186,13 @@ public class UnitServiceImp implements UnitService {
                     if(p.getParent().equals(c))
                     {
                         if(p.getSubUnits()==null){
-                        p.setSubUnits(new HashSet<>());
-                    }else {
+                            p.setSubUnits(new HashSet<>());
+                        }else {
                             p.getSubUnits().add(c);
                             return this.unitCrud.save(p);
                         }
                     }
-                        return  Mono.empty();
+                    return  Mono.empty();
 
                 }).then().log();
     }
@@ -212,14 +214,14 @@ public class UnitServiceImp implements UnitService {
                     for (int i = 0; i < unitBoundary.getEmployees().length; i++) {
                         if(unitBoundary.getEmployees()[i].getEmail().equals(email.replace(" ","")))
                         {
-                           // System.out.println("i"+i+"unit"+unitBoundary.getEmployees()[i].getEmail());
+                            // System.out.println("i"+i+"unit"+unitBoundary.getEmployees()[i].getEmail());
 
                             return unitBoundary.getEmployees()[i];
                         }
                     }
-                return new EmployeeBoundary();
+                    return new EmployeeBoundary();
                 })
-               .log();
+                .log();
 
 
 
@@ -230,20 +232,20 @@ public class UnitServiceImp implements UnitService {
         return this.unitCrud.findAllBy(PageRequest.of(page,size, Sort.Direction.ASC,"createdTimestamp","id"))
                 .flatMap(unit -> {
                     if(unit.getEmailsEmpolyee()!=null){
-                    if(unit.getId()!=null&&unit.getEmailsEmpolyee().contains(entity.getEmail()))
-                    {
-                        return Flux.just(new UnitBoundary(unit));
-                    }}
+                        if(unit.getId()!=null&&unit.getEmailsEmpolyee().contains(entity.getEmail()))
+                        {
+                            return Flux.just(new UnitBoundary(unit));
+                        }}
                     return  Flux.empty();
                 }).map(unitBoundary -> {
-                   return unitBoundary;
+                    return unitBoundary;
                 }).log();
     }
 
 
     @Override
     public Flux<UnitBoundary> getEmployeemanages(EmployeeEntity entity, int size, int page) {
-       //could also another options
+        //could also another options
         return this.unitCrud.findAllBy(PageRequest.of(page,size, Sort.Direction.ASC,"createdTimestamp","id"))
                 .flatMap(unit -> {
                     if(unit.getEmailManager().equals(entity.getEmail())) {
@@ -256,7 +258,7 @@ public class UnitServiceImp implements UnitService {
                 .log();
 
     }
-
+// we checked the result instea
     @Override
     public Flux<employees> getEmployeesbyUnits(EmployeeEntity entity, int size, int page) {
         return this.unitCrud.findAllByIdNotNull(PageRequest.of(page, size, Sort.Direction.ASC, "createdTimestamp", "name", "id"))
@@ -285,16 +287,75 @@ public class UnitServiceImp implements UnitService {
                 .log();
     }
 
-    private  EmployeeBoundary  boundaryEmp(String e)
-{
-    return  new EmployeeBoundary(e);
-}
+    @Override
+    public Mono<EmployeeBoundary> addEmployeeGraph(String unitId, String email) {
+        return this.unitCrud.findById(unitId)
+                .flatMap(unit ->
+                {
+                    if(null==unit.getEmployees()||unit.getEmailsEmpolyee()==null) {
+                      unit.setEmployees(new HashSet<>());
+                      unit.setEmailsEmpolyee(new HashSet<>());
+                    }
+
+                        if(!unit.getEmailsEmpolyee().contains(email))
+                        {
+                            unit.getEmailsEmpolyee().add(email);
+                            unit.getEmployees().add(new EmployeeBoundary(email).toEntity());
+                            return this.unitCrud.save(unit);
+                        }
+
+                    return Mono.empty();
+                }).map(unit -> {
+                    return  new EmployeeBoundary(unit.getEmployees().stream().toList().get(unit.getEmployees().size()-1));
+                });
+
+    }
+
+    @Override
+    public Mono<UnitBoundary> addUnitGraph(String parentid, String newid, String type, String emailmanager) {
+       if(parentid==null||newid==null||type==null||emailmanager==null)
+       {
+           return Mono.error(new BadRequest400("badkeys"));
+       }
+        return this.unitCrud.findById(newid).
+                flatMap(unit1 -> {return  Mono.error(new BadRequest400("found id"));})
+                .switchIfEmpty(Mono.defer(() -> {
+                    UnitBoundary unitBoundary=new UnitBoundary();
+                    unitBoundary.setType(type);
+                    unitBoundary.setId(newid);
+                    unitBoundary.setCreationDate(ValidationUtils.dateToString(new Date()));
+                    //unitBoundary.setParentUnit(new UnitBoundary(parentid));
+                    unitBoundary.setManager(new Manager(emailmanager));
+                    return  Mono.just(unitBoundary.toEntity());
+                })).zipWith(this.unitCrud.findById(parentid))
+                .switchIfEmpty(Mono.error(new BadRequest400("nbad")))
+                .flatMap(tuple->
+                {
+                    UnitEntity p=tuple.getT2();
+                    UnitEntity c= (UnitEntity) tuple.getT1();
+                    c.setParent(p);
+                    return this.unitCrud.save(c);
+                })
+                .flatMap(unit -> {return  this.connectToParent();})
+                .flatMap(unused -> {
+                    UnitBoundary unitBoundary = new UnitBoundary();
+                    unitBoundary.setType(type);
+                    unitBoundary.setId(newid);
+                    unitBoundary.setParentUnit(new UnitBoundary(parentid));
+                    unitBoundary.setManager(new Manager(emailmanager));
+                    return Mono.just(unitBoundary);
+                }).log();}
+
+
+
+
+
 
     @Override
     public Flux<UnitBoundary> getSubUnits(UnitEntity fromId, int size, int page) {
-return this.unitCrud.findAllByParentIdContains(
-        fromId.getId(),
-        PageRequest.of(page, size, Sort.Direction.ASC, "id"))
+        return this.unitCrud.findAllByParentIdContains(
+                        fromId.getId(),
+                        PageRequest.of(page, size, Sort.Direction.ASC, "id"))
                 .map(this::toBoundary)
                 .log();
     }

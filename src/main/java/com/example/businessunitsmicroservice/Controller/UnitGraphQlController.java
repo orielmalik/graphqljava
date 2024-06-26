@@ -3,10 +3,7 @@ package com.example.businessunitsmicroservice.Controller;
 
 import com.example.businessunitsmicroservice.Boundaries.*;
 import com.example.businessunitsmicroservice.Interfaces.UnitService;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.Arguments;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.graphql.data.method.annotation.*;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -80,5 +77,20 @@ public class UnitGraphQlController {
         return this.unitService
                 .getEmployeeFromAllUnits(email).log();
     }
+
+
+
+
+    @MutationMapping
+    public Mono<EmployeeBoundary>addEmployee(@Argument String unitId, @Argument String email)
+    {
+        return  this.unitService.addEmployeeGraph( unitId,   email).log();
+    }
+   @MutationMapping
+    public Mono<UnitBoundary>addUnit(@Argument String parentid, @Argument String newid,@Argument String type,  @Argument  String emailmanager)
+    {
+        return  this.unitService.addUnitGraph(parentid,newid,type,emailmanager).log();
+    }
+
 
 }
